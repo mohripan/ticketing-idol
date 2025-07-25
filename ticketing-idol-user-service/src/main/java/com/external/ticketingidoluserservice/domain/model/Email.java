@@ -1,8 +1,11 @@
 package com.external.ticketingidoluserservice.domain.model;
 
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@Getter
 public class Email {
     private final String value;
 
@@ -15,10 +18,6 @@ public class Email {
 
     private boolean isValid(String value) {
         return Pattern.matches("^(.+)@(.+)$", value);
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override
