@@ -1,0 +1,13 @@
+package com.external.ticketingidolauthserver;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TicketingIdolAuthServerApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
