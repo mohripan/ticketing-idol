@@ -1,0 +1,10 @@
+package com.external.ticketingidoluserservice.application.usecase;
+
+import com.external.ticketingidoluserservice.domain.model.Email;
+import com.external.ticketingidoluserservice.domain.model.User;
+
+import java.util.concurrent.CompletionStage;
+
+public interface RegisterUserUseCase {
+    CompletionStage<User> register(String username, Email email, String rawPassword);
+}

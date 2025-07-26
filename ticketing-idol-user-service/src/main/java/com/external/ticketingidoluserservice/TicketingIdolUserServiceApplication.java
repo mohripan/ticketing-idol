@@ -1,13 +1,20 @@
 package com.external.ticketingidoluserservice;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.external.ticketingidoluserservice.infrastructure.web.UserServiceVerticle;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.vertx.core.Vertx;
 
-@SpringBootApplication
 public class TicketingIdolUserServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TicketingIdolUserServiceApplication.class, args);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle(new UserServiceVerticle());
     }
 
 }
