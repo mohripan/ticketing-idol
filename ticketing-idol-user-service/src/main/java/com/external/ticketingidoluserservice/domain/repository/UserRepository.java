@@ -1,4 +1,4 @@
 package com.external.ticketingidoluserservice.domain.repository;
 
-public interface UserRepository extends UserReadRepository, UserWriteRepository {
+public interface UserRepository extends UserQueryRepository, UserCommandRepository {
 }
