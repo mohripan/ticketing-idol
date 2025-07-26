@@ -98,3 +98,4 @@ nb-configuration.xml
 ##############################
 *.log
 /ticketing-idol-event-service/src/main/resources/application.properties
+/.env

@@ -11,7 +11,7 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: keycloak
     ports:
-      - "8000:8080"
+      - "${KEYCLOAK_HOST_PORT}:8080"
     depends_on:
       - db
 
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT}:5432"
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
 
