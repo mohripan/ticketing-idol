@@ -33,4 +33,14 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> findAll() {
         return List.copyOf(users.values());
     }
+
+    @Override
+    public boolean deleteById(UUID id) {
+        return users.remove(id) != null;
+    }
+
+    @Override
+    public void update(User user) {
+        users.put()
+    }
 }

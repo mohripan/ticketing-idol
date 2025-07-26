@@ -1,14 +1,4 @@
 package com.external.ticketingidoluserservice.domain.repository;
 
-import com.external.ticketingidoluserservice.domain.model.User;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-public interface UserRepository {
-    Optional<User> findByEmail(String email);
-    Optional<User> findById(UUID id);
-    List<User> findAll();
-    void save(User user);
+public interface UserRepository extends UserReadRepository, UserWriteRepository {
 }

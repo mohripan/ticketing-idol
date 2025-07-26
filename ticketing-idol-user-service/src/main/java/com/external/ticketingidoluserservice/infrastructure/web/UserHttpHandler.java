@@ -4,7 +4,7 @@ import com.external.ticketingidoluserservice.application.dto.request.RegisterUse
 import com.external.ticketingidoluserservice.application.dto.response.UserListResponse;
 import com.external.ticketingidoluserservice.application.dto.response.UserResponse;
 import com.external.ticketingidoluserservice.application.mapper.UserResponseMapper;
-import com.external.ticketingidoluserservice.application.usecase.RegisterUserUseCase;
+import com.external.ticketingidoluserservice.application.usecase.UserCommandUseCase;
 import com.external.ticketingidoluserservice.application.usecase.UserQueryUseCase;
 import com.external.ticketingidoluserservice.domain.model.Email;
 import com.external.ticketingidoluserservice.infrastructure.web.error.HttpErrorHandler;
@@ -17,12 +17,12 @@ import java.util.UUID;
 
 public class UserHttpHandler {
     private final Vertx vertx;
-    private final RegisterUserUseCase registerUserUseCase;
+    private final UserCommandUseCase userCommandUseCase;
     private final UserQueryUseCase userQueryUseCase;
 
-    public UserHttpHandler(Vertx vertx, RegisterUserUseCase registerUserUseCase, UserQueryUseCase userQueryUseCase) {
+    public UserHttpHandler(Vertx vertx, UserCommandUseCase userCommandUseCase, UserQueryUseCase userQueryUseCase) {
         this.vertx = vertx;
-        this.registerUserUseCase = registerUserUseCase;
+        this.userCommandUseCase = userCommandUseCase;
         this.userQueryUseCase = userQueryUseCase;
     }
 
@@ -32,18 +32,55 @@ public class UserHttpHandler {
         router.get("/api/users/:id").handler(this::handleGetUserById);
         router.get("/api/users/email/:email").handler(this::handleGetUserByEmail);
         router.get("/api/users").handler(this::handleGetAllUsers);
+        router.put("/api/users/:id").handler(this::handleUpdateUser);
+        router.delete("/api/users/:id").handler(this::handleDeleteUser);
     }
 
     private void handleRegisterUser(RoutingContext ctx) {
         RegisterUserRequest request = ctx.body().asPojo(RegisterUserRequest.class);
 
-        registerUserUseCase.register(request.getUsername(), new Email(request.getEmail()), request.getPassword())
+        userCommandUseCase.register(request.getUsername(), new Email(request.getEmail()), request.getPassword())
                 .thenAccept(user -> {
                     UserResponse response = UserResponseMapper.toResponse(user);
                    ctx.response()
                            .putHeader("Content-Type", "application/json")
                            .setStatusCode(201)
                            .end(Json.encode(response));
+                })
+                .exceptionally(ex -> {
+                    HttpErrorHandler.handleError(ctx, ex);
+                    return null;
+                });
+    }
+
+    private void handleUpdateUser(RoutingContext ctx) {
+        UUID id = UUID.fromString(ctx.pathParam("id"));
+        RegisterUserRequest request = ctx.body().asPojo(RegisterUserRequest.class);
+
+        userCommandUseCase.update(id, request.getUsername(), new Email(request.getEmail()))
+                .thenAccept(updated -> {
+                    if (updated) {
+                        ctx.response().setStatusCode(204).end();
+                    } else {
+                        ctx.response().setStatusCode(404).end("User not found");
+                    }
+                })
+                .exceptionally(ex -> {
+                    HttpErrorHandler.handleError(ctx, ex);
+                    return null;
+                });
+    }
+
+    private void handleDeleteUser(RoutingContext ctx) {
+        UUID id = UUID.fromString(ctx.pathParam("id"));
+
+        userCommandUseCase.deleteById(id)
+                .thenAccept(deleted -> {
+                    if (deleted) {
+                        ctx.response().setStatusCode(204).end();
+                    } else {
+                        ctx.response().setStatusCode(404).end("User not found");
+                    }
                 })
                 .exceptionally(ex -> {
                     HttpErrorHandler.handleError(ctx, ex);
