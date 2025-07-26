@@ -23,7 +23,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     @Override
     public CompletionStage<User> register(String username, Email email, String rawPassword) {
-        String hashedPassword = passwordEncoder.encode(rawPassword);
+        String hashedPassword = "hashed_" + rawPassword;
 
         User user = User.builder()
                 .id(UUID.randomUUID())

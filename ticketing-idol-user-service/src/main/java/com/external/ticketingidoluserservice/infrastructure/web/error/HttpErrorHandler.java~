@@ -1,0 +1,18 @@
+package com.external.ticketingidoluserservice.infrastructure.web.error;
+
+import io.vertx.ext.web.RoutingContext;
+
+public class HttpErrorHandler {
+    public static void handleError(RoutingContext ctx, Throwable ex) {
+        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+        if (cause instanceof IllegalArgumentException) {
+            ctx.response()
+                    .setStatusCode(400)
+                    .putHeader("Content-Type", "application/json")
+                    .end("{\"error\": \"" + cause.getMessage() + "\"}");
+        } else {
+            
+        }
+    }
+}

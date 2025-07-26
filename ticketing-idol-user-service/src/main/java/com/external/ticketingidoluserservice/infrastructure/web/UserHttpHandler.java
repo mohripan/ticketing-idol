@@ -7,6 +7,7 @@ import com.external.ticketingidoluserservice.application.mapper.UserResponseMapp
 import com.external.ticketingidoluserservice.application.usecase.RegisterUserUseCase;
 import com.external.ticketingidoluserservice.application.usecase.UserQueryUseCase;
 import com.external.ticketingidoluserservice.domain.model.Email;
+import com.external.ticketingidoluserservice.infrastructure.web.error.HttpErrorHandler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
@@ -45,7 +46,7 @@ public class UserHttpHandler {
                            .end(Json.encode(response));
                 })
                 .exceptionally(ex -> {
-                    ctx.response().setStatusCode(500).end(ex.getMessage());
+                    HttpErrorHandler.handleError(ctx, ex);
                     return null;
                 });
     }
@@ -64,7 +65,7 @@ public class UserHttpHandler {
                             .end(Json.encode(response));
                 })
                 .exceptionally(ex -> {
-                    ctx.response().setStatusCode(500).end(ex.getMessage());
+                    HttpErrorHandler.handleError(ctx, ex);
                     return null;
                 });
     }
