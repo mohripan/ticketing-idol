@@ -3,6 +3,7 @@ package com.external.ticketingidoluserservice.infrastructure.persistance;
 import com.external.ticketingidoluserservice.domain.model.User;
 import com.external.ticketingidoluserservice.domain.repository.UserRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,5 +27,10 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public void save(User user) {
         users.put(user.getId(), user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return List.copyOf(users.values());
     }
 }
