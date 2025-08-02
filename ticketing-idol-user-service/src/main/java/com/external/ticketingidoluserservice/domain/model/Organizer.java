@@ -10,34 +10,27 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "userId")
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "organizers")
+public class Organizer {
     @Id
-    @Column(nullable = false, unique = true)
-    private UUID id;
+    @Column(name = "user_id", nullable = false, unique = true)
+    private UUID userId;
 
-    @Column(name = "keycloak_id", nullable = false, unique = true)
-    private UUID keycloakId;
+    @Column(name = "organization_name", nullable = false)
+    private String organizationName;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(name = "profile_picture_id")
-    private UUID profilePictureId;
+    @Column(nullable = false)
+    private boolean verified;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at")
     private Instant updatedAt;
-
-    public void touch() {
-        this.updatedAt = Instant.now();
-    }
 }

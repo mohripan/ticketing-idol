@@ -50,7 +50,6 @@ public class UserServiceVerticle extends AbstractVerticle {
             jwkList = jwks.getJsonArray("keys")
                     .stream()
                     .map(obj -> (JsonObject) obj)
-                    .filter(jwk -> "sig".equals(jwk.getString("use")))
                     .collect(Collectors.toList());
 
         } catch (Exception e) {

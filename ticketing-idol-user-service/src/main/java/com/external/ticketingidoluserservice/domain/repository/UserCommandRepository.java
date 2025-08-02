@@ -2,10 +2,8 @@ package com.external.ticketingidoluserservice.domain.repository;
 
 import com.external.ticketingidoluserservice.domain.model.User;
 
-import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 
 public interface UserCommandRepository {
-    void save(User user);
-    boolean deleteById(UUID id);
-    void update(User user);
+    CompletionStage<Void> save(User user);
 }

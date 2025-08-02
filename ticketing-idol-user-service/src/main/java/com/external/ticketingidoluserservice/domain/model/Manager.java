@@ -1,0 +1,18 @@
+package com.external.ticketingidoluserservice.domain.model;
+
+import lombok.*;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Getter
+@EqualsAndHashCode(of = "userId")
+@ToString
+@AllArgsConstructor
+@Builder
+public class Manager {
+    private final UUID userId;
+    private final String agencyName;
+    private final Instant createdAt;
+    private final Instant updatedAt;
+}

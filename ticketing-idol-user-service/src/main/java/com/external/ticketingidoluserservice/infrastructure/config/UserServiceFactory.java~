@@ -1,0 +1,12 @@
+package com.external.ticketingidoluserservice.infrastructure.config;
+
+public class UserServiceFactory {
+    public static UserHttpHandler create(Vertx vertx) {
+        UserRepository repo = new InMemoryUserRepository();
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12);
+        UserCommandUseCase service = new UserCommandService(repo, encoder);
+        UserQueryUseCase userQueryUseCase = new UserQueryService(repo);
+
+        return new UserHttpHandler(vertx, service, userQueryUseCase);
+    }
+}

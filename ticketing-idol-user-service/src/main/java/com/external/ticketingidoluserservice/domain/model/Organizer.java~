@@ -1,0 +1,36 @@
+package com.external.ticketingidoluserservice.domain.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Getter
+@EqualsAndHashCode(of = "userId")
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "organizers")
+public class Organizer {
+    @Id
+    @Column(name = "user_id", nullable = false, unique = true)
+    private UUID userId;
+
+    @Column(name = "organization_name", nullable = false)
+    private String organizationName;
+
+    @Column(nullable = false)
+    private boolean verified;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    
+    private Instant updatedAt;
+}

@@ -1,23 +1,30 @@
 package com.external.ticketingidoluserservice.infrastructure.config;
 
-import com.external.ticketingidoluserservice.application.service.UserCommandService;
-import com.external.ticketingidoluserservice.application.service.UserQueryService;
-import com.external.ticketingidoluserservice.application.usecase.UserCommandUseCase;
-import com.external.ticketingidoluserservice.application.usecase.UserQueryUseCase;
-import com.external.ticketingidoluserservice.domain.repository.UserRepository;
-import com.external.ticketingidoluserservice.domain.security.PasswordEncoder;
-import com.external.ticketingidoluserservice.infrastructure.persistance.InMemoryUserRepository;
-import com.external.ticketingidoluserservice.infrastructure.security.BCryptPasswordEncoder;
-import com.external.ticketingidoluserservice.infrastructure.web.UserHttpHandler;
+import com.external.ticketingidoluserservice.application.service.OrganizerCommandUserCaseImpl;
+import com.external.ticketingidoluserservice.application.usecase.OrganizerCommandUseCase;
+import com.external.ticketingidoluserservice.domain.repository.OrganizerCommandRepository;
+import com.external.ticketingidoluserservice.domain.repository.UserCommandRepository;
+import com.external.ticketingidoluserservice.infrastructure.persistance.OrganizerCommandRepositoryImpl;
+import com.external.ticketingidoluserservice.infrastructure.persistance.UserCommandRepositoryImpl;
+import com.external.ticketingidoluserservice.infrastructure.web.OrganizerHttpHandler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
+import org.keycloak.admin.client.Keycloak;
 
 public class UserServiceFactory {
-    public static UserHttpHandler create(Vertx vertx) {
-        UserRepository repo = new InMemoryUserRepository();
-        PasswordEncoder encoder = new BCryptPasswordEncoder(12);
-        UserCommandUseCase service = new UserCommandService(repo, encoder);
-        UserQueryUseCase userQueryUseCase = new UserQueryService(repo);
+    public static void registerRoutes(Vertx vertx, Router router, Keycloak keycloak, String realm) {
+        // Repositories
+        OrganizerCommandRepository organizerCommandRepository = new OrganizerCommandRepositoryImpl();
+        UserCommandRepository userCommandRepository = new UserCommandRepositoryImpl();
 
-        return new UserHttpHandler(vertx, service, userQueryUseCase);
+        // Use Cases
+        OrganizerCommandUseCase organizerCommandUseCase =
+                new OrganizerCommandUserCaseImpl(organizerCommandRepository, userCommandRepository, keycloak, realm);
+
+        // HTTP Handlers
+        OrganizerHttpHandler organizerHttpHandler = new OrganizerHttpHandler(vertx, organizerCommandUseCase);
+
+        // Route Registration
+        organizerHttpHandler.registerOrganizer(router);
     }
 }

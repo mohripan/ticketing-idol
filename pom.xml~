@@ -12,6 +12,8 @@
     <modules>
         <module>ticketing-idol-event-service</module>
         <module>ticketing-idol-user-service</module>
+        <module>ticketing-idol-api-gateway</module>
+        <module>ticketing-idol-auth-server</module>
     </modules>
 
     <properties>

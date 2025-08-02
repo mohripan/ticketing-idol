@@ -14,14 +14,7 @@ public class TicketingIdolUserServiceApplication {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new UserServiceVerticle(), res -> {
-            if (res.succeeded()) {
-                System.out.println("UserServiceVerticle deployed successfully");
-            } else {
-                System.err.println("Failed to deploy UserServiceVerticle");
-                res.cause().printStackTrace();
-            }
-        });
+        vertx.deployVerticle(new UserServiceVerticle());
     }
 
 }
