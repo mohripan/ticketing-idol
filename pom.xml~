@@ -23,7 +23,7 @@
         <hibernate.version>3.0.6.Final</hibernate.version>
         <jakarta.version>3.1.0</jakarta.version>
         <hibernate-core.version>6.4.4.Final</hibernate-core.version>
-        <junit-jupiter.version>5.12.2</junit-jupiter.version>
+        <junit-jupiter.version>5.13.4</junit-jupiter.version>
         <mockito.version>5.18.0</mockito.version>
 
         <!-- for plugin -->

@@ -1,0 +1,4 @@
+package com.external.ticketingidoluserservice.application.usecase;
+
+public class SanityTest {
+}
