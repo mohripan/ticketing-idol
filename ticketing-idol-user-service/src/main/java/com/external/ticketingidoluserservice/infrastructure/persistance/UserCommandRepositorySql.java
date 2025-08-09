@@ -1,0 +1,42 @@
+package com.external.ticketingidoluserservice.infrastructure.persistance;
+
+import com.external.ticketingidoluserservice.domain.model.User;
+import com.external.ticketingidoluserservice.domain.repository.UserCommandRepository;
+import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Tuple;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+public class UserCommandRepositorySql implements UserCommandRepository {
+    private final PgPool pg;
+
+    public UserCommandRepositorySql(PgPool pg) { this.pg = pg; }
+
+    @Override
+    public CompletionStage<Void> save(User user) {
+        final String sql = """
+            insert into users (id, keycloak_id, username, profile_picture_id, created_at, updated_at)
+            values ($1, $2, $3, $4, $5, $6)
+            on conflict (id) do update set
+              keycloak_id = excluded.keycloak_id,
+              username = excluded.username,
+              profile_picture_id = excluded.profile_picture_id,
+              updated_at = excluded.updated_at
+            """;
+        var params = Tuple.of(
+                user.getId(),
+                user.getKeycloakId(),
+                user.getUsername(),
+                user.getProfilePictureId(),
+                HelperUtil.odt(user.getCreatedAt()),
+                HelperUtil.odt(user.getUpdatedAt())
+        );
+        var fut = new CompletableFuture<Void>();
+        pg.preparedQuery(sql).execute(params, ar -> {
+            if (ar.succeeded()) fut.complete(null);
+            else fut.completeExceptionally(ar.cause());
+        });
+        return fut;
+    }
+}

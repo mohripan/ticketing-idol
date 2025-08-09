@@ -1,9 +1,5 @@
 package com.external.ticketingidoluserservice.domain.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.Instant;
@@ -13,24 +9,31 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "userId")
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "organizers")
+@Builder(toBuilder = true)
 public class Organizer {
-    @Id
-    @Column(name = "user_id", nullable = false, unique = true)
-    private UUID userId;
+    private final UUID userId;
+    private final String organizationName;
+    private final boolean verified;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
-    @Column(name = "organization_name", nullable = false)
-    private String organizationName;
+    public Organizer verify(Instant now) {
+        if (verified) return this; // idempotent
+        return this.toBuilder().verified(true).updatedAt(now).build();
+    }
 
-    @Column(nullable = false)
-    private boolean verified;
+    public Organizer renameOrganization(String newName, Instant now) {
+        // put invariants here (non-empty, length, etc.)
+        return this.toBuilder().organizationName(newName).updatedAt(now).build();
+    }
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    
-    private Instant updatedAt;
+    public static Organizer create(UUID userId, String orgName, Instant now) {
+        return Organizer.builder()
+                .userId(userId)
+                .organizationName(orgName)
+                .verified(false)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+    }
 }

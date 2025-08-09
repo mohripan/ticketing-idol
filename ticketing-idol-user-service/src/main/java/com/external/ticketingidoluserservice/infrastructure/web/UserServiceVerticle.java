@@ -3,7 +3,7 @@ package com.external.ticketingidoluserservice.infrastructure.web;
 import com.external.ticketingidoluserservice.infrastructure.config.UserServiceFactory;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.json.Json;
+import org.flywaydb.core.Flyway;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.jwt.JWTAuth;
@@ -25,6 +25,19 @@ import java.util.stream.Collectors;
 public class UserServiceVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> startPromise) {
+
+        String jdbcUrl = "jdbc:postgresql://localhost:5433/ticketing_user";
+        String dbUser = "user_service";
+        String dbPass = "secret";
+
+        Flyway flyway = Flyway.configure()
+                .dataSource(jdbcUrl, dbUser, dbPass)
+                .locations("classpath:db/migration")
+                .schemas("public")
+                .baselineOnMigrate(true)
+                .load();
+
+        flyway.migrate();
 
         Keycloak keycloak = KeycloakBuilder.builder()
                 .serverUrl("http://localhost:8000")
@@ -59,7 +72,8 @@ public class UserServiceVerticle extends AbstractVerticle {
 
         JWTAuthOptions jwtOpts = new JWTAuthOptions()
                 .setJwks(jwkList)
-                .setJWTOptions(new JWTOptions().setIssuer("http://localhost:8000/realms/" + realm));
+                .setJWTOptions(new JWTOptions().setIssuer("http://localhost:8000/realms/" + realm)
+                        .setLeeway(3600));
 
         JWTAuth jwtAuth = JWTAuth.create(vertx, jwtOpts);
 
@@ -68,7 +82,12 @@ public class UserServiceVerticle extends AbstractVerticle {
 
         router.route("/api/users/*").handler(JWTAuthHandler.create(jwtAuth));
 
-        UserServiceFactory.registerRoutes(vertx, router, keycloak, realm);
+        UserServiceFactory.registerRoutes(vertx, router, keycloak, realm,
+                "localhost",
+                5433,
+                "ticketing_user",
+                "user_service",
+                "secret");
 
         vertx.createHttpServer()
                 .requestHandler(router)

@@ -128,12 +128,12 @@
         <dependency>
             <groupId>com.ongres.scram</groupId>
             <artifactId>client</artifactId>
-            <version>${scram.version}</version>
+            <version></version>
         </dependency>
         <dependency>
             <groupId>com.ongres.scram</groupId>
             <artifactId>common</artifactId>
-            <version>${scram.version}</version>
+            <version>2.1</version>
         </dependency>
     </dependencies>
 

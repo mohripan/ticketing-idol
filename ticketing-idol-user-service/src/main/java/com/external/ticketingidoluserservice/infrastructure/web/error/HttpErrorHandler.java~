@@ -1,7 +1,6 @@
 package com.external.ticketingidoluserservice.infrastructure.web.error;
 
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.pgclient.PgException;
 
 public class HttpErrorHandler {
     public static void handleError(RoutingContext ctx, Throwable ex) {

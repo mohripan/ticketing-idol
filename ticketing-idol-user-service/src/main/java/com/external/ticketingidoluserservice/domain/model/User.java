@@ -1,9 +1,5 @@
 package com.external.ticketingidoluserservice.domain.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.Instant;
@@ -13,31 +9,31 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder(toBuilder = true)
-@Entity
-@Table(name = "users")
 public class User {
-    @Id
-    @Column(nullable = false, unique = true)
-    private UUID id;
+    private final UUID id;
+    private final UUID keycloakId;
+    private final String username;
+    private final UUID profilePictureId;
+    private final Instant createdAt;
+    private final Instant updatedAt;
 
-    @Column(name = "keycloak_id", nullable = false, unique = true)
-    private UUID keycloakId;
+    public User withUpdatedAt(Instant now) {
+        return this.toBuilder().updatedAt(now).build();
+    }
 
-    @Column(nullable = false, unique = true)
-    private String username;
+    public User withProfilePicture(UUID pictureId, Instant now) {
+        return this.toBuilder().profilePictureId(pictureId).updatedAt(now).build();
+    }
 
-    @Column(name = "profile_picture_id")
-    private UUID profilePictureId;
-
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
-    public void touch() {
-        this.updatedAt = Instant.now();
+    public static User create(UUID id, UUID keycloakId, String username, Instant now) {
+        return User.builder()
+                .id(id)
+                .keycloakId(keycloakId)
+                .username(username)
+                .profilePictureId(null)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
     }
 }

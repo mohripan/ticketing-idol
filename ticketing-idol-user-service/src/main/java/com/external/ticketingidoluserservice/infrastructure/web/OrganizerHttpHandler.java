@@ -4,6 +4,7 @@ import com.external.ticketingidoluserservice.application.dto.request.OrganizerRe
 import com.external.ticketingidoluserservice.application.usecase.OrganizerCommandUseCase;
 import com.external.ticketingidoluserservice.infrastructure.web.error.HttpErrorHandler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
@@ -30,10 +31,10 @@ public class OrganizerHttpHandler {
         }
 
         organizerCommandUseCase.registerOrganizer(request)
-                .thenAccept(v -> ctx.response()
+                .thenAccept(result -> ctx.response()
                         .setStatusCode(201)
                         .putHeader("Content-Type", "application/json")
-                        .end("{\"status\": \"organizer created\"}"))
+                        .end(Json.encode(result)))
                 .exceptionally(ex -> {
                     HttpErrorHandler.handleError(ctx, ex);
                     return null;

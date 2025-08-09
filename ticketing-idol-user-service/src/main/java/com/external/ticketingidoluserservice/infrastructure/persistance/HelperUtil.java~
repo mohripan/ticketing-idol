@@ -1,0 +1,7 @@
+package com.external.ticketingidoluserservice.infrastructure.persistance;
+
+public class HelperUtil {
+    private static OffsetDateTime odt(Instant i) {
+        return i.atOffset(ZoneOffset.UTC);
+    }
+}
