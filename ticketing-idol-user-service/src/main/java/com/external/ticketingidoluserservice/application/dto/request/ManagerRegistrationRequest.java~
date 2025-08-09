@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public record ManagerRegistrationRequest(
-        String agencyName
-) {}
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ManagerRegistrationRequest {
+    private String agencyName;
+}

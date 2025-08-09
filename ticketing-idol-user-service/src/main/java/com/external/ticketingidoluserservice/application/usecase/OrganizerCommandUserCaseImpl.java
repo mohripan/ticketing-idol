@@ -59,10 +59,10 @@ public class OrganizerCommandUserCaseImpl implements OrganizerCommandUseCase {
 
         return CompletableFuture
                 .supplyAsync(() -> createKeycloakUser(request), blockingExecutor)
-                .thenComposeAsync(kcUserId -> setPasswordAndRole(kcUserId, request.getPassword()).thenApply(v -> kcUserId),
+                .thenComposeAsync(kcUserId -> setPasswordAndRole(kcUserId, request.password()).thenApply(v -> kcUserId),
                         blockingExecutor)
                 .thenCompose(kcUserId -> {
-                    User user = User.create(appUserId, UUID.fromString(kcUserId), request.getUsername(), now);
+                    User user = User.create(appUserId, UUID.fromString(kcUserId), request.username(), now);
                     return userCommandRepository.save(user)
                             .exceptionally(ex -> {
                                 safeDeleteKeycloakUser(kcUserId);
@@ -71,7 +71,7 @@ public class OrganizerCommandUserCaseImpl implements OrganizerCommandUseCase {
                             .thenApply(v -> user);
                 })
                 .thenCompose(user -> {
-                    Organizer organizer = Organizer.create(user.getId(), request.getOrganizationName(), now);
+                    Organizer organizer = Organizer.create(user.getId(), request.organizationName(), now);
                     return organizerCommandRepository.save(organizer)
                             .thenApply(v -> RegisterOrganizerResult.of(
                                     user.getId(),
@@ -92,20 +92,20 @@ public class OrganizerCommandUserCaseImpl implements OrganizerCommandUseCase {
     }
 
     private void validate(OrganizerRegistrationRequest req) {
-        if (req.getUsername() == null || req.getUsername().isBlank())
+        if (req.username() == null || req.username().isBlank())
             throw new IllegalArgumentException("username is required");
-        if (req.getEmail() == null || req.getEmail().isBlank())
+        if (req.email() == null || req.email().isBlank())
             throw new IllegalArgumentException("email is required");
-        if (req.getPassword() == null || req.getPassword().isBlank())
+        if (req.password() == null || req.password().isBlank())
             throw new IllegalArgumentException("password is required");
-        if (req.getOrganizationName() == null || req.getOrganizationName().isBlank())
+        if (req.organizationName() == null || req.organizationName().isBlank())
             throw new IllegalArgumentException("organizationName is required");
     }
 
     private String createKeycloakUser(OrganizerRegistrationRequest request) {
         UserRepresentation user = new UserRepresentation();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
+        user.setUsername(request.username());
+        user.setEmail(request.email());
         user.setEnabled(true);
 
         Response response = keycloak.realm(realm).users().create(user);
